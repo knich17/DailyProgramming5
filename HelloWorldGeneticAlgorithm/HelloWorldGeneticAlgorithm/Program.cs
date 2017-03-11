@@ -36,7 +36,6 @@ namespace HelloWorldGeneticAlgorithm
             _chromosome = "";
 
             double chanceToPickA = 0.5;
-            double mu = 1;
             if (parentA.fitness <= parentB.fitness) {
                 chanceToPickA = ((double)(parentA.fitness-1) / (parentB.fitness-1)) / 2.0;
             } else {
@@ -45,8 +44,9 @@ namespace HelloWorldGeneticAlgorithm
             chanceToPickA *= 100;
             //chanceToPickA = 50;
 
+            int mutRate = 1000; //(1 / 1000)
             for(int i = 0; i < parentA.chromosome.Length; i++) {
-                if(Population.rnd.Next(0,25) < mu) {
+                if(Population.rnd.Next(0,mutRate) < 1) {
                     _chromosome += (char)Population.rnd.Next(ASCII_START, ASCII_END);
                 } else if(Population.rnd.Next(0,100) < chanceToPickA) {
                     _chromosome += parentA.chromosome[i];
@@ -103,6 +103,9 @@ namespace HelloWorldGeneticAlgorithm
             }
         }
 
+        //Could I instead, make only enough populations to fill the population (half as many)
+        //And merge them with the existing population? Or would this stall progress as the existing population
+        //Has not been mutated.
         public void boomBabies(string goal) {
             Chromosome[] tempPopulation = new Chromosome[_popSize];
             int finesses = calcFinesses();
@@ -139,13 +142,13 @@ namespace HelloWorldGeneticAlgorithm
     class Program
     {
         static void Main(string[] args) {
-            string goal = "Hello, world!";
+            string goal = "I think, therefore I am.";
 
             Population.rnd = new Random();
 
             //generate starting set
             //find fitness of population
-            Population pop = new Population(goal, 100);
+            Population pop = new Population(goal, 10000);
 
             //until goal is met
             Chromosome best = pop.getBestChrome();
